@@ -1,0 +1,103 @@
+@startuml "Diagramme de séquence - Soumission de mémoire - Système de Gestion des Besoins Estudiantins"
+title Diagramme de séquence - Soumission de mémoire - Système de Gestion des Besoins Estudiantins
+actor Etudiant
+participant "IHM" as UI
+participant "Controller" as CTRL
+participant "Service Mémoire" as MEMSVC
+participant "Service Document" as DOCSVC
+participant "Service Notification" as NOTSVC
+participant "Repository" as REPO
+database "BDD" as DB
+participant "File Storage" as FS
+
+== Initialisation ==
+Etudiant -> UI : Accéder "Déposer Mémoire"
+UI -> CTRL : afficherFormulaireMemoire()
+CTRL -> MEMSVC : verifierEligibilite(etudiantId)
+MEMSVC -> REPO : findMiniprojetsTermines(etudiantId)
+REPO -> DB : SELECT * FROM miniprojets WHERE etudiant_id=? AND statut='EVALUE'
+DB --> REPO : return projets
+REPO --> MEMSVC : return projets
+
+alt Étudiant éligible
+  MEMSVC --> CTRL : return eligible=true
+  CTRL --> UI : afficherFormulaire(infosPreRemplies)
+else Non éligible
+  MEMSVC --> CTRL : return eligible=false, raison
+  CTRL --> UI : afficherErreur("Miniprojet non terminé")
+  UI --> Etudiant : Message d'erreur
+end
+
+== Soumission du mémoire ==
+Etudiant -> UI : Remplir formulaire\n(titre, résumé, mots-clés)
+Etudiant -> UI : Uploader fichier PDF
+UI -> UI : validerFormatFichier(pdf)
+
+alt Format valide
+  UI -> CTRL : soumettreMemoire(data, fichierPDF)
+  CTRL -> CTRL : validerMetadonnees(data)
+  
+  alt Métadonnées valides
+    CTRL -> DOCSVC : sauvegarderDocument(fichierPDF)
+    DOCSVC -> FS : store(fichierPDF)
+    FS --> DOCSVC : return path
+    DOCSVC -> REPO : saveDocument(documentEntity)
+    REPO -> DB : INSERT INTO documents
+    DB --> REPO : return documentId
+    
+    CTRL -> MEMSVC : creerMemoire(data, documentId)
+    MEMSVC -> MEMSVC : verifierUnicite(titre)
+    MEMSVC -> REPO : checkTitreExiste(titre)
+    REPO -> DB : SELECT COUNT(*) FROM memoires WHERE titre=?
+    DB --> REPO : return count
+    
+    alt Titre unique
+      MEMSVC -> REPO : saveMemoire(memoire)
+      REPO -> DB : INSERT INTO memoires
+      DB --> REPO : return memoireId
+      
+      == Notifications ==
+      MEMSVC -> NOTSVC : notifierEncadrant(memoireId)
+      NOTSVC -> REPO : findEncadrant(etudiantId)
+      REPO -> DB : SELECT enseignant FROM encadrements
+      DB --> REPO : return enseignant
+      
+      NOTSVC -> NOTSVC : creerNotification(enseignant, "Nouveau mémoire déposé")
+      NOTSVC -> REPO : saveNotification(notif)
+      REPO -> DB : INSERT INTO notifications
+      
+      MEMSVC -> NOTSVC : notifierAdministration(memoireId)
+      NOTSVC -> REPO : saveNotificationAdmin(notif)
+      
+      MEMSVC --> CTRL : return success(memoireId)
+      CTRL --> UI : afficherConfirmation(memoireId)
+      UI --> Etudiant : "Mémoire déposé avec succès\nID: XXX"
+      
+    else Titre déjà utilisé
+      MEMSVC --> CTRL : return erreur("Titre déjà existant")
+      CTRL --> UI : afficherErreur("Choisissez un autre titre")
+    end
+    
+  else Métadonnées invalides
+    CTRL --> UI : afficherErreurs(listeErreurs)
+    UI --> Etudiant : Afficher erreurs de validation
+  end
+  
+else Format invalide
+  UI --> Etudiant : "Seuls les fichiers PDF sont acceptés"
+end
+
+== Versioning (optionnel) ==
+opt Mise à jour ultérieure
+  Etudiant -> UI : "Mettre à jour mémoire"
+  UI -> CTRL : updateMemoire(memoireId, nouveauFichier)
+  CTRL -> MEMSVC : versionnerMemoire(memoireId, nouveauFichier)
+  MEMSVC -> REPO : incrementerVersion(memoireId)
+  REPO -> DB : UPDATE memoires SET version = version + 1
+  MEMSVC -> DOCSVC : archiver ancienne version
+  DOCSVC -> FS : move to archive/
+  MEMSVC --> CTRL : return success
+  CTRL --> UI : "Version mise à jour"
+end
+
+@enduml

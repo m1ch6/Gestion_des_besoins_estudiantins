@@ -1,0 +1,37 @@
+@startuml "Processus de validation d'un projet étudiant"
+title Processus de validation d'un projet étudiant
+start
+
+:Réception du projet;
+:Vérification des prérequis;
+
+if (Prérequis OK?) then (oui)
+  :Assigner à un enseignant;
+  :Notification enseignant;
+  
+  fork
+    :Enseignant examine le projet;
+  fork again
+    :Vérification anti-plagiat;
+  end fork
+  
+  if (Projet acceptable?) then (oui)
+    :Marquer comme validé;
+    :Générer feedback positif;
+  else (non)
+    :Marquer comme rejeté;
+    :Rédiger commentaires;
+  endif
+  
+else (non)
+  :Rejeter automatiquement;
+  :Motif: Prérequis manquants;
+endif
+
+:Notifier l'étudiant;
+:Mettre à jour dashboard;
+:Archiver décision;
+
+stop
+
+@enduml

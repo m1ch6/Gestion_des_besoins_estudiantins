@@ -1,0 +1,76 @@
+@startuml "Diagramme de Cas d'Utilisation - Système de Gestion des Besoins Estudiantins"
+!define RECTANGLE class
+title Diagramme de Cas d'Utilisation - Système de Gestion des Besoins Estudiantins
+
+' Définition des acteurs
+actor "Étudiant" as ETU
+actor "Enseignant" as ENS
+actor "Administrateur" as ADMIN
+actor "Système" as SYS
+
+' Package principal
+package "Système de Gestion des Besoins Estudiantins" {
+  
+  ' Package Gestion des Miniprojets
+  package "Gestion des Miniprojets" #LightBlue {
+    usecase "Soumettre miniprojet" as UC1
+    usecase "Consulter état miniprojet" as UC2
+    usecase "Valider miniprojet" as UC3
+    usecase "Attribuer encadrant" as UC4
+    usecase "Évaluer miniprojet" as UC5
+  }
+  
+  ' Package Gestion des Mémoires
+  package "Gestion des Mémoires" #LightGreen {
+    usecase "Déposer mémoire" as UC6
+    usecase "Versionner mémoire" as UC7
+    usecase "Valider mémoire" as UC8
+    usecase "Programmer soutenance" as UC9
+    usecase "Noter mémoire" as UC10
+  }
+  
+  ' Package Tableau de Bord
+  package "Tableau de Bord" #LightYellow {
+    usecase "Consulter dashboard personnel" as UC11
+    usecase "Générer statistiques" as UC12
+    usecase "Exporter rapports" as UC13
+  }
+  
+  ' Package Administration
+  package "Administration" #LightCoral {
+    usecase "Gérer utilisateurs" as UC14
+    usecase "Configurer deadlines" as UC15
+    usecase "Gérer notifications" as UC16
+  }
+}
+
+' Relations
+ETU --> UC1 : <<include>>
+ETU --> UC2
+ETU --> UC6
+ETU --> UC7
+ETU --> UC11
+
+ENS --> UC3
+ENS --> UC4
+ENS --> UC5
+ENS --> UC8
+ENS --> UC10
+ENS --> UC11
+
+ADMIN --> UC9
+ADMIN --> UC12
+ADMIN --> UC13
+ADMIN --> UC14
+ADMIN --> UC15
+ADMIN --> UC16
+
+SYS --> UC16 : <<extend>>
+
+' Relations entre cas d'utilisation
+UC1 ..> UC16 : <<include>>
+UC3 ..> UC16 : <<include>>
+UC6 ..> UC16 : <<include>>
+UC8 ..> UC16 : <<include>>
+
+@enduml

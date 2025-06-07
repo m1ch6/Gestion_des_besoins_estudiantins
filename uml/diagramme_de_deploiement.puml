@@ -1,0 +1,43 @@
+@startuml "Diagramme de Déploiement du Système de Gestion des Besoins Étudiantins"
+title Diagramme de Déploiement du Système de Gestion des Besoins Étudiantins
+node "Navigateur Web" as CLIENT {
+  component "React App" as REACT {
+    [Components]
+    [Redux Store]
+    [API Client]
+  }
+}
+
+node "Serveur Application" as APPSERVER {
+  component "Spring Boot" as SPRING {
+    [Controllers REST]
+    [Services]
+    [Repositories]
+    [Security]
+  }
+}
+
+node "Serveur Base de Données" as DBSERVER {
+  database "MySQL" as DB {
+    [Tables]
+    [Vues]
+    [Procedures]
+  }
+}
+
+node "Serveur Fichiers" as FILESERVER {
+  folder "Storage" {
+    [Documents]
+    [Backups]
+  }
+}
+
+CLIENT --> APPSERVER : HTTPS/REST API
+APPSERVER --> DBSERVER : JDBC
+APPSERVER --> FILESERVER : SFTP
+
+note right of CLIENT : Port 443 (HTTPS)
+note right of APPSERVER : Port 8080 (Tomcat)
+note right of DBSERVER : Port 3306 (MySQL)
+
+@enduml

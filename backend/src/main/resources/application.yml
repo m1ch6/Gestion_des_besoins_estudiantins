@@ -1,0 +1,48 @@
+spring:
+    application:
+        name: student-management-system
+
+    datasource:
+        url: jdbc:mysql://localhost:3306/isstm?useSSL=false&allowPublicKeyRetrieval=true
+        username: root
+        password: rootpass
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: false
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL8Dialect
+                "[format_sql]": true
+
+    security:
+        jwt:
+            secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+            expiration: 86400000 # 24 hours
+            refresh-expiration: 604800000 # 7 days
+
+server:
+    port: 8080
+    servlet:
+        context-path: /api
+
+logging:
+    level:
+        "[com.university.sms]": DEBUG
+        "[org.springframework.security]": DEBUG
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Configuration des fichiers
+file:
+    upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+    max-size: 10MB
+    allowed-types: pdf,doc,docx,zip
+
+# Configuration des notifications
+notification:
+    email:
+        enabled: true
+        from: noreply@university.com

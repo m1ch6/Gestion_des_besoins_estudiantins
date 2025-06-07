@@ -1,0 +1,143 @@
+@startuml "Diagramme de Classe - Système de Gestion Des Besoins Estudiantins"
+!define ENTITY class
+!define ENUM enum
+title Diagramme de Classe - Système de Gestion Des Besoins Estudiantins
+
+' Classes principales
+ENTITY Utilisateur {
+  - id: Long
+  - nom: String
+  - prenom: String
+  - email: String
+  - motDePasse: String
+  - dateCreation: Date
+  - actif: Boolean
+  + seConnecter()
+  + seDeconnecter()
+  + modifierProfil()
+}
+
+ENTITY Etudiant {
+  - matricule: String
+  - promotion: String
+  - specialite: String
+  + soumettreMiniprojet()
+  + deposerMemoire()
+}
+
+ENTITY Enseignant {
+  - grade: String
+  - departement: String
+  - specialites: List<String>
+  + validerProjet()
+  + evaluerTravail()
+}
+
+ENTITY Administrateur {
+  - niveau: String
+  + gererUtilisateurs()
+  + configurerSysteme()
+}
+
+ENTITY Miniprojet {
+  - id: Long
+  - titre: String
+  - description: String
+  - dateSubmission: Date
+  - statut: StatutProjet
+  - note: Float
+  - commentaires: String
+  + soumettre()
+  + valider()
+  + evaluer()
+}
+
+ENTITY Memoire {
+  - id: Long
+  - titre: String
+  - resume: String
+  - motsCles: List<String>
+  - dateDepot: Date
+  - version: Integer
+  - statut: StatutMemoire
+  - noteSoutenance: Float
+  + deposer()
+  + versionner()
+  + programmerSoutenance()
+}
+
+ENTITY Document {
+  - id: Long
+  - nom: String
+  - chemin: String
+  - taille: Long
+  - typeDocument: String
+  - dateUpload: Date
+  + telecharger()
+  + supprimer()
+}
+
+ENTITY Notification {
+  - id: Long
+  - message: String
+  - type: TypeNotification
+  - dateCreation: Date
+  - lu: Boolean
+  + envoyer()
+  + marquerCommeLu()
+}
+
+ENTITY Soutenance {
+  - id: Long
+  - date: Date
+  - lieu: String
+  - jury: List<Enseignant>
+  - note: Float
+  - observations: String
+  + programmer()
+  + reporter()
+  + noter()
+}
+
+' Enums
+ENUM StatutProjet {
+  SOUMIS
+  EN_COURS_VALIDATION
+  VALIDE
+  REJETE
+  EN_COURS
+  TERMINE
+}
+
+ENUM StatutMemoire {
+  BROUILLON
+  DEPOSE
+  EN_REVISION
+  VALIDE
+  SOUTENU
+}
+
+ENUM TypeNotification {
+  INFO
+  ALERTE
+  URGENT
+  SYSTEME
+}
+
+' Relations d'héritage
+Utilisateur <|-- Etudiant
+Utilisateur <|-- Enseignant
+Utilisateur <|-- Administrateur
+
+' Associations
+Etudiant "1" --> "*" Miniprojet : soumet
+Etudiant "1" --> "0..1" Memoire : rédige
+Enseignant "1" --> "*" Miniprojet : encadre
+Enseignant "1" --> "*" Memoire : dirige
+Miniprojet "*" --> "1..*" Document : contient
+Memoire "*" --> "1..*" Document : contient
+Memoire "1" --> "0..1" Soutenance : fait l'objet
+Utilisateur "1" --> "*" Notification : reçoit
+Soutenance "*" --> "2..*" Enseignant : jury
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml "Diagramme de Sequence - Soumission de Mini-Projet - Système de Gestion Des Besoins Estudiantins"
+title Diagramme de Sequence - Soumission de Mini-Projet - Système de Gestion Des Besoins Estudiantins
+actor Etudiant
+participant "IHM" as UI
+participant "Controller" as CTRL
+participant "Service" as SVC
+participant "Repository" as REPO
+database "BDD" as DB
+
+Etudiant -> UI : Cliquer "Nouveau Miniprojet"
+UI -> CTRL : afficherFormulaire()
+CTRL -> UI : return formulaire
+
+Etudiant -> UI : Remplir infos + Upload doc
+UI -> CTRL : soumettreProjet(data, files)
+
+CTRL -> CTRL : validerDonnees(data)
+alt Données valides
+  CTRL -> SVC : creerMiniprojet(data, files)
+  SVC -> REPO : save(miniprojet)
+  REPO -> DB : INSERT miniprojet
+  DB --> REPO : return id
+  
+  SVC -> SVC : genererNotification()
+  SVC -> REPO : saveNotification(notif)
+  REPO -> DB : INSERT notification
+  
+  SVC --> CTRL : return success
+  CTRL --> UI : afficherConfirmation()
+  UI --> Etudiant : "Projet soumis avec succès"
+else Données invalides
+  CTRL --> UI : afficherErreurs(errors)
+  UI --> Etudiant : Afficher messages d'erreur
+end
+
+@enduml

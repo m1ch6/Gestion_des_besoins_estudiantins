@@ -1,0 +1,54 @@
+# IDE configuration files
+# ===================================
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+
+# Build artifacts, dependencies & generated files
+# ===================================
+# Maven build output
+target/
+
+# Node.js dependencies and build output
+**/node_modules/
+**/build/
+**/dist/
+
+# Generated UML diagrams from /uml source
+out/
+
+
+# Log files
+# ===================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# Local environment variables
+# ===================================
+.env
+.env.local
+.env.*.local
+
+
+# Operating System specific files
+# ===================================
+.DS_Store
+Thumbs.db
+
+
+# Miscellaneous
+# ===================================
+# The project tree file itself
+tree.txt

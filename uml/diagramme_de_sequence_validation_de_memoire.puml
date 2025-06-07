@@ -1,0 +1,41 @@
+@startuml "Diagramme de Séquence - Validation de mémoire - Système de Gestions de Besoins Estudiantins"
+title Diagramme de Séquence - Validation de mémoire - Système de Gestions de Besoins Estudiantins
+actor Enseignant
+participant "IHM" as UI
+participant "Controller" as CTRL
+participant "Service" as SVC
+participant "Repository" as REPO
+database "BDD" as DB
+
+Enseignant -> UI : Accéder liste mémoires
+UI -> CTRL : getMemoiresAValider()
+CTRL -> SVC : recupererMemoiresEnAttente()
+SVC -> REPO : findByStatut(EN_REVISION)
+REPO -> DB : SELECT * FROM memoires WHERE statut='EN_REVISION'
+DB --> REPO : return list
+REPO --> SVC : return list
+SVC --> CTRL : return list
+CTRL --> UI : afficherListe(memoires)
+
+Enseignant -> UI : Sélectionner mémoire
+UI -> CTRL : consulterMemoire(id)
+CTRL -> SVC : getMemoire(id)
+SVC -> REPO : findById(id)
+REPO -> DB : SELECT * FROM memoires WHERE id=?
+DB --> REPO : return memoire
+REPO --> SVC : return memoire
+SVC --> CTRL : return memoire
+CTRL --> UI : afficherDetails(memoire)
+
+Enseignant -> UI : Valider avec commentaires
+UI -> CTRL : validerMemoire(id, decision, commentaires)
+CTRL -> SVC : traiterValidation(id, decision, commentaires)
+
+SVC -> REPO : updateStatut(id, VALIDE)
+REPO -> DB : UPDATE memoires SET statut='VALIDE'
+SVC -> SVC : notifierEtudiant(memoire.etudiant)
+SVC --> CTRL : return success
+CTRL --> UI : afficherConfirmation()
+UI --> Enseignant : "Mémoire validé"
+
+@enduml

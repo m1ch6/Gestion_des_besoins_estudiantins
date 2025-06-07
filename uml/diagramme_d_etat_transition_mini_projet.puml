@@ -1,0 +1,35 @@
+@startuml "Diagramme d'état-transition - Mini Projet"
+title Diagramme d'état-transition - Mini Projet
+skinparam titleFontSize 18
+[*] --> Brouillon : Création
+
+Brouillon --> Soumis : soumettre()
+Brouillon --> [*] : annuler()
+
+Soumis --> EnValidation : [Assigné à enseignant]
+Soumis --> Rejeté : [Incomplet]
+
+EnValidation --> Validé : valider()
+EnValidation --> Rejeté : rejeter()
+
+Rejeté --> Brouillon : modifier()
+Rejeté --> [*] : abandonner()
+
+Validé --> EnCours : commencer()
+
+EnCours --> Terminé : finaliser()
+EnCours --> Suspendu : suspendre()
+
+Suspendu --> EnCours : reprendre()
+Suspendu --> Abandonné : abandonner()
+
+Terminé --> Évalué : evaluer()
+
+Évalué --> [*]
+Abandonné --> [*]
+
+note right of Soumis : Notification automatique\nà l'enseignant
+note right of Validé : Notification à l'étudiant
+note right of Évalué : Note finale attribuée
+
+@enduml
