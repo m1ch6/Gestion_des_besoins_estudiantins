@@ -11,7 +11,6 @@ import java.util.List;
  * Représente un étudiant avec ses projets et mémoires
  */
 @Entity
-@Table(name = "students")
 @DiscriminatorValue("STUDENT")
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -21,8 +20,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Student extends User {
-
-    private Long id;
 
     @Column(nullable = false)
     private String fullName;

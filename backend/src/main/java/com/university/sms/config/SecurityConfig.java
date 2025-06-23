@@ -42,18 +42,10 @@ public class SecurityConfig {
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf.disable())
-                                .cors(withDefaults()) // Enable CORS
-                                .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
-                                                .permitAll()
-                                                .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/*.ico",
-                                                                "/static/**", "/assets/**")
-                                                .permitAll()
-                                                .anyRequest().authenticated())
-                                .userDetailsService(userDetailsService)
-                                .formLogin(withDefaults()) // enables form login at /login
-                                .httpBasic(withDefaults()); // enables HTTP Basic auth
-
+                                .cors(withDefaults())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                                .formLogin(form -> form.disable())
+                                .httpBasic(httpBasic -> httpBasic.disable());
                 return http.build();
         }
 
