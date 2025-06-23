@@ -12,7 +12,6 @@ import java.util.List;
  * et être membre d’un jury de soutenance.
  */
 @Entity
-@Table(name = "teachers")
 @DiscriminatorValue("TEACHER")
 @Getter
 @Setter

@@ -146,13 +146,13 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>11.9.0</version>
+            <version>11.9.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-            <version>11.9.0</version>
+            <version>11.9.1</version>
         </dependency>
     </dependencies>
 
@@ -189,6 +189,13 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>11.9.0</version>
+                <configuration>
+                    <url>
+                        jdbc:mysql://127.0.0.1:3306/isstm?useSSL=false&amp;allowPublicKeyRetrieval=true</url>
+                    <user>root</user>
+                    <password>rootpass</password>
+                    <cleanDisabled>false</cleanDisabled>
+                </configuration>
             </plugin>
         </plugins>
     </build>

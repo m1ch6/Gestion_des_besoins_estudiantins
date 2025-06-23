@@ -10,7 +10,6 @@ import com.university.sms.security.UserPrincipal;
 import com.university.sms.service.MiniprojectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,14 +30,12 @@ import java.util.List;
 @RequestMapping("/miniprojects")
 @RequiredArgsConstructor
 @Tag(name = "Miniprojects", description = "API de gestion des miniprojets")
-@SecurityRequirement(name = "bearerAuth")
 public class MiniprojectController extends BaseController {
 
     private final MiniprojectService miniprojectService;
 
     @Operation(summary = "Créer un nouveau miniprojet")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<MiniprojectResponseDTO> createMiniproject(
             @Valid @RequestPart("project") MiniprojectCreateDTO dto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
@@ -51,7 +47,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Récupérer un miniprojet par ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMINISTRATOR')")
     public ResponseEntity<Miniproject> getMiniproject(@PathVariable Long id) {
         Miniproject response = miniprojectService.findById(id);
         return ok(response);
@@ -59,7 +54,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Mettre à jour un miniprojet")
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<MiniprojectResponseDTO> updateMiniproject(
             @PathVariable Long id,
             @Valid @RequestBody MiniprojectUpdateDTO dto,
@@ -71,7 +65,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Soumettre un miniprojet pour validation")
     @PostMapping("/{id}/submit")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<MiniprojectResponseDTO> submitMiniproject(
             @PathVariable Long id,
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
@@ -82,7 +75,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Valider un miniprojet")
     @PostMapping("/{id}/validate")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<MiniprojectResponseDTO> validateMiniproject(
             @PathVariable Long id,
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
@@ -93,7 +85,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Rejeter un miniprojet")
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<MiniprojectResponseDTO> rejectMiniproject(
             @PathVariable Long id,
             @RequestParam String feedback,
@@ -105,7 +96,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Évaluer un miniprojet")
     @PostMapping("/{id}/evaluate")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<MiniprojectResponseDTO> evaluateMiniproject(
             @PathVariable Long id,
             @Valid @RequestBody EvaluationDTO evaluationDTO,
@@ -118,7 +108,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Récupérer mes miniprojets (étudiant)")
     @GetMapping("/my-projects")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<MiniprojectResponseDTO>> getMyProjects(
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
 
@@ -128,7 +117,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Récupérer les projets supervisés (enseignant)")
     @GetMapping("/supervised")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Page<MiniprojectResponseDTO>> getSupervisedProjects(
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser,
             @PageableDefault(size = 20) Pageable pageable) {
@@ -139,7 +127,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Récupérer les projets en attente de validation")
     @GetMapping("/pending-validation")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Page<MiniprojectResponseDTO>> getPendingValidation(
             @PageableDefault(size = 20) Pageable pageable) {
 
@@ -149,7 +136,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Ajouter un document à un miniprojet")
     @PostMapping("/{id}/documents")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<MiniprojectResponseDTO> addDocument(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file,
@@ -161,7 +147,6 @@ public class MiniprojectController extends BaseController {
 
     @Operation(summary = "Supprimer un document d'un miniprojet")
     @DeleteMapping("/{projectId}/documents/{documentId}")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<Void> removeDocument(
             @PathVariable Long projectId,
             @PathVariable Long documentId,

@@ -8,7 +8,6 @@ import com.university.sms.security.UserPrincipal;
 import com.university.sms.service.ThesisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpHeaders;
@@ -33,14 +31,12 @@ import java.util.List;
 @RequestMapping("/theses")
 @RequiredArgsConstructor
 @Tag(name = "Theses", description = "API de gestion des mémoires")
-@SecurityRequirement(name = "bearerAuth")
 public class ThesisController extends BaseController {
 
     private final ThesisService thesisService;
 
     @Operation(summary = "Créer un nouveau mémoire")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<ThesisResponseDTO> createThesis(
             @Valid @RequestPart("thesis") ThesisCreateDTO dto,
             @RequestPart("file") MultipartFile file,
@@ -52,7 +48,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Récupérer un mémoire par ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMINISTRATOR')")
     public ResponseEntity<Thesis> getThesis(@PathVariable Long id) {
         Thesis response = thesisService.findById(id);
         return ok(response);
@@ -60,7 +55,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Soumettre un mémoire")
     @PostMapping("/{id}/submit")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<ThesisResponseDTO> submitThesis(
             @PathVariable Long id,
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
@@ -71,7 +65,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Mettre à jour la version d'un mémoire")
     @PostMapping("/{id}/update-version")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<ThesisResponseDTO> updateThesisVersion(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file,
@@ -83,7 +76,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Mettre un mémoire en révision")
     @PostMapping("/{id}/under-review")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ThesisResponseDTO> putThesisUnderReview(
             @PathVariable Long id,
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
@@ -94,7 +86,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Valider un mémoire")
     @PostMapping("/{id}/validate")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ThesisResponseDTO> validateThesis(
             @PathVariable Long id,
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
@@ -105,7 +96,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Rejeter un mémoire")
     @PostMapping("/{id}/reject")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ThesisResponseDTO> rejectThesis(
             @PathVariable Long id,
             @RequestParam String feedback,
@@ -117,7 +107,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Programmer une soutenance")
     @PostMapping("/{id}/schedule-defense")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<ThesisResponseDTO> scheduleDefense(
             @PathVariable Long id,
             @Valid @RequestBody DefenseScheduleDTO scheduleDTO) {
@@ -128,7 +117,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Enregistrer le résultat d'une soutenance")
     @PostMapping("/{id}/defense-result")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ThesisResponseDTO> recordDefenseResult(
             @PathVariable Long id,
             @Valid @RequestBody DefenseResultDTO resultDTO) {
@@ -140,7 +128,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Récupérer mon mémoire (étudiant)")
     @GetMapping("/my-thesis")
-    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<ThesisResponseDTO> getMyThesis(
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser) {
 
@@ -150,7 +137,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Récupérer les mémoires supervisés (enseignant)")
     @GetMapping("/supervised")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Page<ThesisResponseDTO>> getSupervisedTheses(
             @Parameter(hidden = true) @CurrentUser UserPrincipal currentUser,
             @PageableDefault(size = 20) Pageable pageable) {
@@ -161,7 +147,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Rechercher des mémoires par mot-clé")
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMINISTRATOR')")
     public ResponseEntity<List<ThesisResponseDTO>> searchByKeyword(@RequestParam String keyword) {
         List<ThesisResponseDTO> theses = thesisService.searchByKeyword(keyword);
         return ok(theses);
@@ -169,7 +154,6 @@ public class ThesisController extends BaseController {
 
     @Operation(summary = "Récupérer les mémoires en attente de validation")
     @GetMapping("/pending-validation")
-    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<List<ThesisResponseDTO>> getPendingValidation() {
         List<ThesisResponseDTO> theses = thesisService.findPendingValidation();
         return ok(theses);
@@ -180,7 +164,6 @@ public class ThesisController extends BaseController {
     // ------------------------------------------------------------
     @Operation(summary = "Télécharger le document d'un mémoire")
     @GetMapping("/{id}/download")
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMINISTRATOR')")
     public ResponseEntity<Resource> downloadThesisDocument(@PathVariable Long id) {
 
         FileDTO fileDTO = thesisService.downloadDocument(id);
@@ -200,7 +183,6 @@ public class ThesisController extends BaseController {
     // ------------------------------------------------------------
     @Operation(summary = "Supprimer un mémoire")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteThesis(@PathVariable Long id) {
         thesisService.deleteThesis(id);
         return noContent(); // méthode utilitaire héritée de BaseController
