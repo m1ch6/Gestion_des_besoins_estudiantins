@@ -3,6 +3,7 @@
 # IntelliJ
 .idea/
 *.iml
+node/
 # Eclipse
 .classpath
 .project
