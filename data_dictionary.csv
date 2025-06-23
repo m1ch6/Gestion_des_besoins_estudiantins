@@ -1,0 +1,82 @@
+Table,Champ,Type,Clé,Description
+users,id,bigint,PK,Identifiant unique de l'utilisateur
+users,created_at,datetime(6),,Date de création
+users,updated_at,datetime(6),,Date de dernière modification
+users,version,bigint,,Version (optimisme de verrouillage)
+users,first_name,varchar(100),,Prénom
+users,last_name,varchar(100),,Nom
+users,email,varchar(255),UNIQUE,Adresse e-mail
+users,password,varchar(255),,Mot de passe (haché)
+users,active,bit(1),,Utilisateur actif ?
+users,role,enum('STUDENT','TEACHER','ADMINISTRATOR'),,Rôle de l'utilisateur
+users,user_type,varchar(31),,Type d'utilisateur
+students,id,bigint,PK/FK,Identifiant étudiant (réf. users.id)
+students,full_name,varchar(200),,Nom complet
+students,registration_number,varchar(50),UNIQUE,Numéro d'inscription
+students,promotion,varchar(50),,Promotion/année
+students,speciality,varchar(100),,Spécialité
+students,supervisor_id,bigint,FK,Encadrant (réf. users.id)
+teachers,id,bigint,PK/FK,Identifiant enseignant (réf. users.id)
+teachers,full_name,varchar(200),,Nom complet
+teachers,grade,varchar(100),,Grade académique
+teachers,department,varchar(100),,Département
+miniprojects,id,bigint,PK,Identifiant mini-projet
+miniprojects,created_at,datetime(6),,Date de création
+miniprojects,updated_at,datetime(6),,Date de dernière modification
+miniprojects,version,bigint,,Version
+miniprojects,title,varchar(255),,Titre du projet
+miniprojects,description,text,,Description du projet
+miniprojects,student_id,bigint,FK,Étudiant (réf. students.id)
+miniprojects,supervisor_id,bigint,FK,Encadrant (réf. teachers.id)
+miniprojects,status,varchar(32),,Statut du projet
+miniprojects,grade,float,,Note
+miniprojects,feedback,text,,Retour/feedback
+theses,id,bigint,PK,Identifiant mémoire
+theses,created_at,datetime(6),,Date de création
+theses,updated_at,datetime(6),,Date de dernière modification
+theses,version,bigint,,Version
+theses,title,varchar(255),UNIQUE,Titre du mémoire
+theses,summary,text,,Résumé
+theses,status,varchar(32),,Statut
+theses,thesis_version,int,,Numéro de version
+theses,submission_date,datetime(6),,Date de soumission
+theses,validation_date,datetime(6),,Date de validation
+theses,final_grade,float,,Note finale
+theses,student_id,bigint,FK,Étudiant (réf. students.id)
+theses,supervisor_id,bigint,FK,Encadrant (réf. teachers.id)
+documents,id,bigint,PK,Identifiant document
+documents,created_at,datetime(6),,Date de création
+documents,updated_at,datetime(6),,Date de dernière modification
+documents,version,bigint,,Version
+documents,file_name,varchar(255),,Nom du fichier
+documents,content_type,varchar(100),,Type MIME
+documents,size,bigint,,Taille (octets)
+documents,storage_path,varchar(500),,Chemin de stockage
+documents,type,varchar(32),,Type de document
+documents,upload_date,datetime(6),,Date de dépôt
+documents,miniproject_id,bigint,FK,Mini-projet (réf. miniprojects.id)
+documents,thesis_id,bigint,FK,Mémoire (réf. theses.id)
+defenses,id,bigint,PK,Identifiant soutenance
+defenses,created_at,datetime(6),,Date de création
+defenses,updated_at,datetime(6),,Date de dernière modification
+defenses,version,bigint,,Version
+defenses,defense_date,datetime(6),,Date de soutenance
+defenses,location,varchar(255),,Lieu
+defenses,grade,float,,Note
+defenses,observations,text,,Observations
+defenses,thesis_id,bigint,FK,Mémoire (réf. theses.id)
+defense_jury,defense_id,bigint,PK/FK,Soutenance (réf. defenses.id)
+defense_jury,teacher_id,bigint,PK/FK,Membre du jury (réf. teachers.id)
+notifications,id,bigint,PK,Identifiant notification
+notifications,created_at,datetime(6),,Date de création
+notifications,updated_at,datetime(6),,Date de dernière modification
+notifications,version,bigint,,Version
+notifications,type,varchar(32),,Type de notification
+notifications,title,varchar(255),,Titre
+notifications,message,text,,Message
+notifications,is_read,bit(1),,Lue ?
+notifications,read_at,datetime(6),,Date de lecture
+notifications,recipient_id,bigint,FK,Destinataire (réf. users.id)
+notifications,read,tinyint(1),,Dupliqué de is_read
+thesis_keywords,thesis_id,bigint,PK/FK,Mémoire (réf. theses.id)
+thesis_keywords,keyword,varchar(100),PK,Mot-clé
