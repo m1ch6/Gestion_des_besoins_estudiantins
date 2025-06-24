@@ -1,0 +1,38 @@
+Entity,Attribute,Type,Description
+Utilisateur,idUtilisateur,int,Identifiant unique de l'utilisateur
+Utilisateur,nom,String,Nom de l'utilisateur
+Utilisateur,prenom,String,Prénom de l'utilisateur
+Utilisateur,email,String,Adresse email
+Notification,idNotification,int,Identifiant de la notification
+Notification,message,String,Message de la notification
+Notification,dateEnvoi,DateTime,Date et heure d'envoi
+Notification,estLu,boolean,Notification lue ou non
+Administrateur,,,
+Enseignant,,,
+Technicien,,,
+ResponsableLabo,,,
+Laboratoire,idLabo,int,Identifiant du laboratoire
+Laboratoire,nom,String,Nom du laboratoire
+Laboratoire,domaine,String,Domaine du laboratoire
+SeanceTP,idSeance,int,Identifiant de la séance TP
+SeanceTP,sujet,String,Sujet de la séance TP
+SeanceTP,dateHeureDebut,DateTime,Date et heure de début
+SeanceTP,dateHeureFin,DateTime,Date et heure de fin
+Reservation,idReservation,int,Identifiant de la réservation
+Reservation,quantiteReservee,int,Quantité réservée
+Materiel,idMateriel,int,Identifiant du matériel
+Materiel,nom,String,Nom du matériel
+Materiel,quantite,int,Quantité disponible
+Materiel,etat,EtatMateriel,État du matériel
+Materiel,localisation,String,Localisation du matériel
+EtatMateriel,DISPONIBLE,enum,Matériel disponible
+EtatMateriel,RESERVE,enum,Matériel réservé
+EtatMateriel,EN_UTILISATION,enum,Matériel en utilisation
+EtatMateriel,EN_MAINTENANCE,enum,Matériel en maintenance
+EtatMateriel,EN_PANNE,enum,Matériel en panne
+Etudiant,,,
+Rapport,idRapport,int,Identifiant du rapport
+Rapport,contenu,File,Contenu du rapport
+Rapport,note,float,Note obtenue
+Rapport,commentaires,String,Commentaires
+Rapport,dateSoumission,DateTime,Date de soumission

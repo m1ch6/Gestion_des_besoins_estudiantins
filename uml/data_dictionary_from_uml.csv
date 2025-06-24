@@ -1,0 +1,47 @@
+Entity,Attribute,Type,Description
+Utilisateur,id,Long,Identifiant unique de l'utilisateur
+Utilisateur,nom,String,Nom de l'utilisateur
+Utilisateur,prenom,String,Prénom de l'utilisateur
+Utilisateur,email,String,Adresse email
+Utilisateur,motDePasse,String,Mot de passe
+Utilisateur,dateCreation,Date,Date de création du compte
+Utilisateur,actif,Boolean,Compte actif ou non
+Etudiant,matricule,String,Numéro matricule
+Etudiant,promotion,String,Promotion de l'étudiant
+Etudiant,specialite,String,Spécialité de l'étudiant
+Enseignant,grade,String,Grade de l'enseignant
+Enseignant,departement,String,Département d'affectation
+Enseignant,specialites,List<String>,Spécialités de l'enseignant
+Administrateur,niveau,String,Niveau d'administration
+Miniprojet,id,Long,Identifiant du mini-projet
+Miniprojet,titre,String,Titre du mini-projet
+Miniprojet,description,String,Description du mini-projet
+Miniprojet,dateSubmission,Date,Date de soumission
+Miniprojet,statut,StatutProjet,Statut du mini-projet
+Miniprojet,note,Float,Note obtenue
+Miniprojet,commentaires,String,Commentaires
+Memoire,id,Long,Identifiant du mémoire
+Memoire,titre,String,Titre du mémoire
+Memoire,resume,String,Résumé du mémoire
+Memoire,motsCles,List<String>,Mots-clés
+Memoire,dateDepot,Date,Date de dépôt
+Memoire,version,Integer,Version du mémoire
+Memoire,statut,StatutMemoire,Statut du mémoire
+Memoire,noteSoutenance,Float,Note de soutenance
+Document,id,Long,Identifiant du document
+Document,nom,String,Nom du document
+Document,chemin,String,Chemin du fichier
+Document,taille,Long,Taille du fichier
+Document,typeDocument,String,Type de document
+Document,dateUpload,Date,Date d'upload
+Notification,id,Long,Identifiant de la notification
+Notification,message,String,Message
+Notification,type,TypeNotification,Type de notification
+Notification,dateCreation,Date,Date de création
+Notification,lu,Boolean,Notification lue ou non
+Soutenance,id,Long,Identifiant de la soutenance
+Soutenance,date,Date,Date de la soutenance
+Soutenance,lieu,String,Lieu de la soutenance
+Soutenance,jury,List<Enseignant>,Membres du jury
+Soutenance,note,Float,Note de la soutenance
+Soutenance,observations,String,Observations
